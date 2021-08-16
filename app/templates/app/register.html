@@ -1,4 +1,4 @@
-{% extends 'app/login.html' %}
+{% extends 'app/base.html' %}
 
 {% block content %}
 <div class="container">
@@ -36,7 +36,7 @@
                     </div>
 
                     <div class="pb-2">
-                        <button type="submit" class="btn btn-dark w-100 font-weight-bold mt-2">Sing Up</button>
+                        <button type="submit" class="btn btn-dark w-100 font-weight-bold mt-2">Sign Up</button>
                     </div>
 
                 </form>
@@ -48,7 +48,7 @@
                             aria-hidden="true"></i> Login With Facebook</button>
                 </div>
                 <div class="pt-4 text-center">
-                    Already Have an Account? <a href="#">Login Here</a>
+                    Already Have an Account? <a href="{% url 'login' %}">Login Here</a>
                 </div>
             </div>
 
