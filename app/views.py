@@ -1,5 +1,67 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from Core.settings import EMAIL_HOST_USER
+import uuid
+from django.contrib.auth.models import User
+from django.shortcuts import redirect, render
+from .models import Profile
+from django.contrib import messages
+from django.core.mail import send_mail
+
 
 def home(request):
-    return render(request,'app/base.html')
+    return render(request, 'app/base.html')
+
+
+def login(request):
+    return render(request,'app/login.html')
+
+
+def register(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+
+        if User.objects.filter(username=username).first():
+            messages.info(request, 'Username is already  taken')
+            return redirect('/register')
+
+        if User.objects.filter(email=email).first():
+            messages.info(request, 'Email is already Taken')
+            return redirect('/register')
+
+        user = User(username=username, email=email, password=password)
+        if user is not None:
+            user.save()
+
+        token = str(uuid.uuid4())
+        profile = Profile.objects.create(user=user, token=token)
+        if profile is not None:
+            profile.save()
+        send_confirmation_mail(email,token)
+        return redirect('/token/')
+
+    return render(request, 'app/register.html')
+
+def verify(request,token):
+    profile=Profile.objects.filter(token=token).first()
+    if profile:
+        if profile.is_valid:
+            messages.info(request,'Your account is already varified')
+            return redirect('/login')
+        
+        profile.is_valid=True
+        profile.save()
+        messages.info(request,'Your account has been varified')
+        return redirect('/login')
+    
+
+def token_sent(request):
+    return render(request,'app/token.html')
+
+
+def send_confirmation_mail(email,token):
+    subject=f'your account need to be verify'
+    messages=f'please click this link to be varified http://127.0.0.1:8000/verify/{token}'
+    email_from=EMAIL_HOST_USER
+    recipient_list=[email]
+    send_mail(subject,messages,email_from,recipient_list)
