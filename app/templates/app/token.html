@@ -1,10 +1,15 @@
 {% extends 'app/base.html' %}
-
+{% block title %}
+Token 
+{% endblock title %}
 {% block content %}
 <div class="contianer bg-dark text-white text-center">
     <div class="row">
         <div class="col">
-            <h1>We have sent a Email</h1>
+          
+            <script>
+           swal("Good job!", "We have sent a Mail", "success");
+            </script>
         </div>
     </div>
 

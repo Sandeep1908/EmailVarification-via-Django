@@ -12,10 +12,7 @@ from django.contrib.auth import authenticate,login,logout
 
 def home(request):
     if request.user.is_authenticated:
-        if request.session.get('username')==request.user.username:
-            return render(request, 'app/home.html')
-        else:
-            return HttpResponse('plese login first')
+            return render(request, 'app/home.html')     
     else:
         return redirect('/login')
 
@@ -42,7 +39,6 @@ def login_attemp(request):
                 return redirect('/login')
             else:            
                 login(request,reg)
-                request.session['username']=username
                 return redirect('/')
 
 
@@ -84,6 +80,7 @@ def register(request):
     
 def logout_user(request):
     logout(request)
+    request.session.flush()
     return redirect('/login')
 
 def verify(request,token):
