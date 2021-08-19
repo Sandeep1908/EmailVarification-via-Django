@@ -101,6 +101,11 @@ def changepwd(request,token):
 
         if password1==password2:
             profile=Profile.objects.filter(token=token).first()
+            user=User.objects.get(id=profile.user.id)
+            user.set_password(password1)
+            user.save()
+            messages.info(request,'Password Changed succssfully')
+            return redirect('/login')
             
         else:
             messages.info(request,'Password not matched')
