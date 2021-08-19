@@ -77,6 +77,36 @@ def register(request):
         return render(request, 'app/register.html')
     else:
         return redirect('/')
+
+def forgot(request):
+    if request.method == 'POST':
+        username=request.POST['username']
+        user=User.objects.filter(username=username).first()
+        if user is not None:
+            email=user.email
+            profile=Profile.objects.filter(user=user).first()
+            token=profile.token
+            send_forgot_mail(email,token)
+            return redirect('/token')
+        else:
+            messages.info(request,'Username not found')
+            return redirect('/forgot password')
+    else:
+     return render(request, 'app/forgotpwd.html')
+
+def changepwd(request,token):
+    if request.method == 'POST':
+        password1=request.POST['password1']
+        password2=request.POST['password2']
+
+        if password1==password2:
+            profile=Profile.objects.filter(token=token).first()
+            
+        else:
+            messages.info(request,'Password not matched')
+            return redirect('/changepassword')
+    else:
+        return render(request, 'app/change.html')
     
 def logout_user(request):
     logout(request)
@@ -103,6 +133,13 @@ def token_sent(request):
 def send_confirmation_mail(email,token):
     subject=f'your account need to be verify'
     messages=f'please click this link to be varified http://127.0.0.1:8000/verify/{token}'
+    email_from=EMAIL_HOST_USER
+    recipient_list=[email]
+    send_mail(subject,messages,email_from,recipient_list)
+
+def send_forgot_mail(email,token):
+    subject=f'Click the link to change password'
+    messages=f'please click this link to be varified http://127.0.0.1:8000/change/{token}'
     email_from=EMAIL_HOST_USER
     recipient_list=[email]
     send_mail(subject,messages,email_from,recipient_list)
