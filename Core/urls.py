@@ -25,5 +25,7 @@ urlpatterns = [
     path('token/',views.token_sent,name='token'),
     path('verify/<token>',views.verify,name='varify'),
     path('login/',views.login_attemp,name='login'),
-    path('logout/',views.logout_user,name='logout')
+    path('logout/',views.logout_user,name='logout'),
+    path('forgot password/',views.forgot,name='forgot'),
+    path('change/<token>',views.changepwd,name='changepwd'),
 ]
